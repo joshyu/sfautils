@@ -1,0 +1,9 @@
+* Edit sr.sh, and change all the locations where you see "sadek"
+** gitbasedir should be the git base directory (not inside the git repo directory, but its parent directory)
+** webbasedir should be your web root
+** you can change all the defaults for the script
+
+* Edit config_si.php and replace all the strings with brackets "<BLAHBLAH>"
+* put config_si.php in your git base directory
+
+run "./sr.sh -h" for help
