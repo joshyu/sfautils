@@ -14,6 +14,7 @@ MYSQLUPASS='joshyupeng'
 flavor="ult"
 version="6.4.0"
 location_sugarbase=$LOCATIONDIR/$flavor/sugarcrm
+INSTALL_URL="http://localhost:81/install.php?goto=SilentInstall&cli=true";
 installType="$1"
 haswebdir='';
 
@@ -111,7 +112,7 @@ do_build(){
 
 do_install(){
     echo "silently install via curl";
-    curl "http://localhost:81/install.php?goto=SilentInstall&cli=true";
+    curl $INSTALL_URL;
 }
 
 ######main function #####################
