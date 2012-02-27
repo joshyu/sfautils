@@ -7,4 +7,3 @@ freshbuild.sh full:   fully build
 freshbuild.sh incre:  incrementally build     
 freshbuild.sh clean:  remove config files     
 freshbuild.sh dropdb: drop database
-test with new 
