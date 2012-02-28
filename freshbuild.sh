@@ -105,14 +105,22 @@ do_backup(){
 }
 
 do_build(){
+    echo "now building new sugar build";
     pushd $BUILDPHPDIR > /dev/null 2>&1
     php -n build.php --clean=0  --dir="$GITDIR/sugarcrm" --flav="$flavor" --cleanCache=1 --base_dir="$GITDIR" --build_dir="$LOCATIONDIR" --ver="$version"
     popd > /dev/null 2>&1  
+    echo "build OK";
 }
 
 do_install(){
     echo "silently install via curl";
     curl $INSTALL_URL;
+}
+
+do_removeSugarBuild(){
+    echo "deleting existing sugarcrm build";
+    rm -rf "$location_sugarbase" ;
+    echo "delete OK";
 }
 
 ######main function #####################
@@ -124,10 +132,7 @@ if [ $installType == 'full' ];then
     echo "Build Type: Full";
     
     do_dropdatabase;
-
-    echo "deleting existing sugarcrm build";
-    rm -rf $location_sugarbase;
-
+    do_removeSugarBuild;
     do_build;
     do_cover;
     do_install;
