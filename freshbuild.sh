@@ -1,5 +1,5 @@
 #!/bin/bash
-SFABASE="/F/_joshyu_/data/IBM_projects/sfa"
+SFABASE="/e/_joshyu_/data/IBM_projects/sfa"
 GITDIR="$SFABASE/gitrepos/Mango"
 BUILDPHPDIR="$GITDIR/build/rome"
 SFAUTIL="$SFABASE/gitrepos/sfautils"
@@ -8,7 +8,7 @@ WEBSUGARROOT="$SFABASE/builds/ult/sugarcrm"
 GITDIR=$SFABASE/gitrepos/Mango
 LOCATIONDIR=$SFABASE/builds
 BUILDPHPDIR=$GITDIR/build/rome
-MYSQLBIN="/e/xampp/mysql/bin"
+MYSQLBIN="/e/server/mysql55/bin"
 MYSQLUNAME='root'
 MYSQLUPASS='joshyupeng'
 flavor="ult"
