@@ -1,6 +1,6 @@
 #!/bin/bash
-GITDIR=/F/_joshyu_/data/IBM_projects/sfa/gitrepos/Mango
-LOCATIONDIR=/F/_joshyu_/data/IBM_projects/sfa/builds
+GITDIR=/e/_joshyu_/data/IBM_projects/sfa/gitrepos/Mango
+LOCATIONDIR=/e/_joshyu_/data/IBM_projects/sfa/builds
 BUILDPHPDIR=$GITDIR/build/rome
 flavor="ult"
 version="6.4.0"
