@@ -26,16 +26,20 @@ db2server_path='~/sqllib/bin:~/sqllib/adm:~/sqllib/misc:~/sqllib/db2tss/bin'
 #   subs
 #=========================================================================================
 do_dropdatabase(){
-    echo "now init db2 database with account:db2inst1";
-    ssh $sshAccount@$sshIp:~/ "export PATH=\"$PATH:$db2server_path\"; ~/bin/initDB.sh $db2DB"    
+    echo "now init db2 database ";
+
+    pushd $SFAUTIL > /dev/null 2>&1
+    initDB2ForSugar $db2DB
+    #ssh $sshAccount@$sshIp:~/ "export PATH=\"$PATH:$db2server_path\"; ~/bin/initDB.sh $db2DB"    
+    popd > /dev/null 2>&1  
 }
 
 
 do_cover(){
     echo "cover config_si_db2 file to sugarcrm build";
-    if [ -e "$SFAUTIL/config_si_db2.php" ]
+    if [ -e "$SFAUTIL/config_si_localdb2.php" ]
     then
-        cp "$SFAUTIL/config_si_db2.php" "$location_sugarbase/config_si.php" ;
+        cp "$SFAUTIL/config_si_localdb2.php" "$location_sugarbase/config_si.php" ;
     fi
 }
 
@@ -114,7 +118,7 @@ do_install(){
 do_rundataloader(){
     echo "Running dataloader";
     echo "It will take you very long time, you can leave and take a cup of coffee.";
-    cp "$SFAUTIL/dataloader_config.php" "$DATALOADERDIR/config.php";
+    cp "$SFAUTIL/dataloader_config_local.php" "$DATALOADERDIR/config.php";
     pushd $DATALOADERDIR > /dev/null 2>&1
     php populate_SmallDataset.php
     popd > /dev/null 2>&1  
@@ -137,8 +141,8 @@ if [ $installType == 'full' ];then
     do_build;
     do_cover;
 
-    read -p "previous actions finished, prepare for dropping database , If you are Ready, press
-    [ENTER] to continue";
+    #read -p "previous actions finished, prepare for dropping database , If you are Ready, press
+    #[ENTER] to continue";
     
     do_dropdatabase;
     if [ $? == 0 ];then
@@ -162,7 +166,7 @@ if [ $installType == 'full' ];then
             esac
         done
         
-        #echo "if you see it install successfully, please run 'freshbuild-db2.sh dataloader' to import demo data ";
+        #echo "if you see it install successfully, please run 'freshbuild-localdb2.sh dataloader' to import demo data ";
     else
         echo "db2 initializing Error";
     fi
@@ -210,19 +214,19 @@ elif [ $installType == 'dropdb' ];then
 
 elif [ $installType == 'help' ];then
     echo "==================================================";
-    echo "freshbuild-db2.sh for sugarcrm dev                ";
+    echo "freshbuild-localdb2.sh for sugarcrm dev                ";
     echo "         by Josh Yu(yupengdl@cn.ibm.com)          ";
-    echo "freshbuild-db2.sh help:   show this help menu     ";
-    echo "freshbuild-db2.sh build:  build a brand new version";
-    echo "freshbuild-db2.sh full:   fully build             ";
-    echo "freshbuild-db2.sh incre:  incrementally build     ";
-    echo "freshbuild-db2.sh clean:  remove config files     ";
-    echo "freshbuild-db2.sh dropdb: drop database           ";
-    echo "freshbuild-db2.sh install: install via cli        ";
-    echo "freshbuild-db2.sh dataloader: import demo data    ";
+    echo "freshbuild-localdb2.sh help:   show this help menu     ";
+    echo "freshbuild-localdb2.sh build:  build a brand new version";
+    echo "freshbuild-localdb2.sh full:   fully build             ";
+    echo "freshbuild-localdb2.sh incre:  incrementally build     ";
+    echo "freshbuild-localdb2.sh clean:  remove config files     ";
+    echo "freshbuild-localdb2.sh dropdb: drop database           ";
+    echo "freshbuild-localdb2.sh install: install via cli        ";
+    echo "freshbuild-localdb2.sh dataloader: import demo data    ";
     echo "==================================================";
 elif [ ! -z $installType ];then
     echo "invalid command \"$installType\".";
-    echo "please enter freshbuild-db2.sh help";
+    echo "please enter freshbuild-localdb2.sh help";
     exit 1;
 fi

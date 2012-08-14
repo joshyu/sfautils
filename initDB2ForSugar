@@ -1,0 +1,58 @@
+#!/bin/bash
+if [[ "${1}" = "" ]]
+then
+	echo "Error: Pleas tell me the database name!"
+	echo "USAGE: ${0} databaseName"
+	echo "CAUTION: This script will drop the database you specified and recreate it!"
+	exit 1
+fi
+
+##############################################
+### CHANGE THE DATABASE NAME AS YOU NEED #####
+##############################################
+export DB2DBDFT=${1} # set sugarult as the default branch
+echo "Stopping instance..."
+db2 "FORCE APPLICATION ALL" # flush all connections
+db2stop # stop DB2
+
+echo "Starting instance..."
+db2start # start DB2
+db2 "FORCE APPLICATION ALL" # flush all connections
+
+echo "Dropping database ${1}..."
+db2 "DROP DATABASE ${1}" # drop the previously existing database if it exists
+
+echo "Recreating database ${1}..."
+db2 "CREATE DATABASE ${1} USING CODESET UTF-8 TERRITORY US COLLATE USING UCA500R1_LEN_S2 PAGESIZE 32 K" # create the database from scratch
+
+echo "Configuring database ${1}..."
+db2 "CONNECT TO ${1}" # make a connection to update the parameters below
+db2 "UPDATE database configuration for ${1} using applheapsz 16384 app_ctl_heap_sz 8192"
+db2 "UPDATE database configuration for ${1} using stmtheap 60000"
+db2 "UPDATE database configuration for ${1} using locklist 50000"
+db2 "UPDATE database configuration for ${1} using indexrec RESTART"
+db2 "UPDATE database configuration for ${1} using logprimary 12"
+db2 "UPDATE database configuration for ${1} using DATABASE_MEMORY AUTOMATIC" #Prevent memory exceeding
+db2 "CREATE BUFFERPOOL USERBP1 IMMEDIATE  SIZE 1000 AUTOMATIC PAGESIZE 32 K"
+db2 "CREATE  LARGE  TABLESPACE USERSPACE1 PAGESIZE 32 K  MANAGED BY AUTOMATIC STORAGE EXTENTSIZE 16 OVERHEAD 10.5 PREFETCHSIZE 16 TRANSFERRATE 0.14 BUFFERPOOL USERBP1"
+db2 "CREATE BUFFERPOOL SUGARBP IMMEDIATE  SIZE 1000 AUTOMATIC PAGESIZE 32 K"
+db2 "CREATE  LARGE  TABLESPACE SUGARTS PAGESIZE 32 K  MANAGED BY AUTOMATIC STORAGE EXTENTSIZE 16 OVERHEAD 10.5 PREFETCHSIZE 16 TRANSFERRATE 0.14 BUFFERPOOL SUGARBP"
+db2 "FORCE APPLICATION ALL" # close all conections to restart DB2 below
+echo "Done! Please read the output above to see whether errors occured!"
+
+echo "Restarting instance..."
+db2set DB2_COMPATIBILITY_VECTOR=4008
+db2stop
+db2start
+
+echo "Enabling text search for database ${1}..."
+db2 "CONNECT TO ${1}"
+##################################################
+### PLEASE CHANGE db2inst1 TO YOUR OWN ACCOUNT NAME
+##################################################
+db2ts DISABLE DATABASE FOR TEXT CONNECT TO ${1}
+## 
+db2ts ENABLE DATABASE FOR TEXT AUTOGRANT CONNECT TO ${1}
+db2ts START FOR TEXT
+
+echo "OK, now you can try to use this database to install sugarCRM."
