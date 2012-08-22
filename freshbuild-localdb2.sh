@@ -122,6 +122,33 @@ do_rundataloader(){
     pushd $DATALOADERDIR > /dev/null 2>&1
     php populate_SmallDataset.php
     popd > /dev/null 2>&1  
+
+    echo "Now run additional Action? (y/n)";
+    case $yn in
+        [Yy]* ) 
+            do_runAdditionalActionAfterDataloader;
+            break;;
+        [Nn]* ) break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+}
+
+do_runAdditionalActionAfterDataloader(){
+    pushd $WEBSUGARROOT > /dev/null 2>&1
+    cd custom/cli
+    echo "Rebuild accounts_hierarchy";
+    php -f cli.php task=RebuildClientHierarchy #(Rebuild accounts_hierarchy)
+    echo "Update top tier nodes";
+    php -f cli.php task=UpdateUsersTopTierNode # (Update top tier nodes)
+
+    echo "FCH denormalization manager";
+    cd -
+    cd batch_sugar/RTC_19211
+    php -f rtc_19211_main.php RTC_19211  # (FCH denormalization manager)
+
+    echo "Additional Action completed";
+
+    popd > /dev/null 2>&1  
 }
 
 do_removeSugarBuild(){
@@ -174,6 +201,23 @@ if [ $installType == 'full' ];then
 elif [ $installType == 'dataloader' ];then
     do_rundataloader;
 
+elif [ $installType == 'afterDataloader' ];then
+    do_runAdditionalActionAfterDataloader;
+elif [ $installType == 'update' ];then
+    echo "sync local codebase with remote repo.";
+    cd $GITDIR
+    git fup
+    git cupr
+    git br -D ibm_current
+    git co -b ibm_current
+    git mupr
+    git mups
+
+elif [ $installType == 'test' ];then
+    echo "run unittest over tests/ibm";
+    cd $WEBSUGARROOT/tests
+    php phpunit.php php tests/ibm
+
 elif [ $installType == 'incre' ];then
     echo "Build Type: Incremental";
     do_backup;
@@ -217,6 +261,8 @@ elif [ $installType == 'help' ];then
     echo "freshbuild-localdb2.sh for sugarcrm dev                ";
     echo "         by Josh Yu(yupengdl@cn.ibm.com)          ";
     echo "freshbuild-localdb2.sh help:   show this help menu     ";
+    echo "freshbuild-localdb2.sh update: update the local codes     ";
+    echo "freshbuild-localdb2.sh test:  run tests over tests/ibm    ";
     echo "freshbuild-localdb2.sh build:  build a brand new version";
     echo "freshbuild-localdb2.sh full:   fully build             ";
     echo "freshbuild-localdb2.sh incre:  incrementally build     ";
@@ -224,6 +270,7 @@ elif [ $installType == 'help' ];then
     echo "freshbuild-localdb2.sh dropdb: drop database           ";
     echo "freshbuild-localdb2.sh install: install via cli        ";
     echo "freshbuild-localdb2.sh dataloader: import demo data    ";
+    echo "freshbuild-localdb2.sh afterDataloader: additional action after dataloader    ";
     echo "==================================================";
 elif [ ! -z $installType ];then
     echo "invalid command \"$installType\".";
