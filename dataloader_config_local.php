@@ -15,8 +15,8 @@ $config = array(
 		'type' => 'db2', // mysql or db2
 		'host' => 'localhost',
 		'port' => '50000',
-		'username' => 'joshyu',
-		'password' => '8Y4u3p328',
+		'username' => 'db2inst1',
+		'password' => 'db2inst1',
 		'name' => 'SUGARJOS',
 	),
 	// default bean field/values used by Utils_Db::createInsert()

@@ -1,25 +1,19 @@
 #!/bin/bash
-SFABASE="/e/_joshyu_/data/IBM_projects/sfa"
-GITDIR="$SFABASE/gitrepos/Mango"
+GITDIR="$HOME/gitrepos/sugarcrm/Mango"
 BUILDPHPDIR="$GITDIR/build/rome"
-SFAUTIL="$SFABASE/gitrepos/sfautils"
-WEBSUGARROOT="$SFABASE/builds/ult/sugarcrm"
+SFAUTIL="$HOME/gitrepos/sugarcrm/sfautils"
+WEBSUGARROOT="$HOME/gitrepos/sugarcrm/builds/ult/sugarcrm"
 DATALOADERDIR="$GITDIR/ibm/dataloaders"
 
-LOCATIONDIR=$SFABASE/builds
-MYSQLBIN="/e/server/mysql55/bin"
-MYSQLUNAME='root'
-MYSQLUPASS='joshyupeng'
+LOCATIONDIR=$HOME/gitrepos/sugarcrm/builds
 flavor="ult"
 version="6.4.0"
 location_sugarbase=$LOCATIONDIR/$flavor/sugarcrm
 INSTALL_URL="http://localhost:81/install.php?goto=SilentInstall&cli=true";
 installType="$1"
 haswebdir='';
-sshIp='9.115.146.146'
 sshAccount='db2inst1'
 db2DB='SUGARJOS'
-db2server_path='~/sqllib/bin:~/sqllib/adm:~/sqllib/misc:~/sqllib/db2tss/bin'
 
 
 #=========================================================================================
@@ -27,11 +21,8 @@ db2server_path='~/sqllib/bin:~/sqllib/adm:~/sqllib/misc:~/sqllib/db2tss/bin'
 #=========================================================================================
 do_dropdatabase(){
     echo "now init db2 database ";
-
-    pushd $SFAUTIL > /dev/null 2>&1
-    initDB2ForSugar $db2DB
-    #ssh $sshAccount@$sshIp:~/ "export PATH=\"$PATH:$db2server_path\"; ~/bin/initDB.sh $db2DB"    
-    popd > /dev/null 2>&1  
+    su db2inst1 -c ". $HOME/.profile && $HOME/bin/initDB.sh $db2DB"
+    exit 0;
 }
 
 
