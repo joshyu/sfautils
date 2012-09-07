@@ -21,8 +21,11 @@ db2DB='SUGARJOS'
 #=========================================================================================
 do_dropdatabase(){
     echo "now init db2 database ";
-    su db2inst1 -c ". $HOME/.profile && $HOME/bin/initDB.sh $db2DB"
-    exit 0;
+    echo "the function is not working";
+    #sudo su db2inst1
+    #. /home/db2inst1/.profile
+    #/home/db2inst1/bin/initDB.sh $db2DB
+    #exit 0;
 }
 
 
@@ -97,6 +100,8 @@ do_build(){
     echo "now building new sugar build";
     pushd $BUILDPHPDIR > /dev/null 2>&1
     php -n build.php --clean=0  --dir="$GITDIR/sugarcrm" --flav="$flavor" --cleanCache=1 --base_dir="$GITDIR" --build_dir="$LOCATIONDIR" --ver="$version"
+
+    chmod -R 0777 $WEBSUGARROOT
     popd > /dev/null 2>&1  
     echo "build OK";
 }
@@ -144,7 +149,7 @@ do_runAdditionalActionAfterDataloader(){
 
 do_removeSugarBuild(){
     echo "deleting existing sugarcrm build";
-    rm -rf "$location_sugarbase" ;
+    sudo rm -rf "$location_sugarbase" ;
     echo "delete OK";
 }
 
