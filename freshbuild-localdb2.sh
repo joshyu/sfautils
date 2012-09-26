@@ -21,8 +21,8 @@ db2DB='SUGARJOS'
 #=========================================================================================
 do_dropdatabase(){
     echo "now init db2 database ";
-    echo "the function is not working";
-    #sudo su db2inst1
+    #echo "the function is not working";
+    sudo su db2inst1 -c "sh /home/db2inst1/.profile && /home/db2inst1/bin/initDB.sh $db2DB"
     #. /home/db2inst1/.profile
     #/home/db2inst1/bin/initDB.sh $db2DB
     #exit 0;
