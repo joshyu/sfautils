@@ -112,11 +112,23 @@ do_install(){
 }
 
 do_rundataloader(){
-    echo "Running dataloader";
-    echo "It will take you very long time, you can leave and take a cup of coffee.";
     cp "$SFAUTIL/dataloader_config_local.php" "$DATALOADERDIR/config.php";
     pushd $DATALOADERDIR > /dev/null 2>&1
-    php populate_SmallDataset.php
+
+    local DATA_PHP="";
+    if [ "$2" == "small" ];then
+        echo "Running Tiny dataloader";
+        echo "It will take you very long time, you can leave and take a cup of coffee.";
+        DATA_PHP="populate_TinyDataset.php";
+    else
+        echo "Running Small dataloader";
+        echo "It will take you some time, please wait.";
+        DATA_PHP="populate_SmallDataset.php";
+    fi
+
+    php $DATA_PHP;
+    #php populate_SmallDataset.php
+
     popd > /dev/null 2>&1  
 
     echo "Now run additional Action? (y/n)";
@@ -131,6 +143,7 @@ do_rundataloader(){
 
 do_runAdditionalActionAfterDataloader(){
     pushd $WEBSUGARROOT > /dev/null 2>&1
+    sudo chmod -R 0777 *
     cd custom/cli
     echo "Rebuild accounts_hierarchy";
     php -f cli.php task=RebuildClientHierarchy #(Rebuild accounts_hierarchy)
@@ -176,7 +189,7 @@ if [ $installType == 'full' ];then
             read -p "Has the sugarcrm been installed successfully ?" yn
             case $yn in
                 [Yy]* ) 
-                    do_rundataloader; 
+                    do_rundataloader $@; 
                     if [ $? == 0 ];then
                         echo "data imported successfully, please open the url and enjoy sugarcrm.";
                     else
@@ -195,7 +208,7 @@ if [ $installType == 'full' ];then
     fi
 
 elif [ $installType == 'dataloader' ];then
-    do_rundataloader;
+    do_rundataloader $@;
 
 elif [ $installType == 'afterDataloader' ];then
     do_runAdditionalActionAfterDataloader;
@@ -228,7 +241,7 @@ elif [ $installType == 'install' ];then
         read -p "Has the sugarcrm been installed successfully ?" yn
         case $yn in
             [Yy]* ) 
-                do_rundataloader; 
+                do_rundataloader $@; 
                 if [ $? == 0 ];then
                     echo "data imported successfully, please open the url and enjoy sugarcrm.";
                 else
