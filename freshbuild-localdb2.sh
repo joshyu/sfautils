@@ -99,7 +99,8 @@ do_backup(){
 do_build(){
     echo "now building new sugar build";
     pushd $BUILDPHPDIR > /dev/null 2>&1
-    php -n build.php --clean=0  --dir="$GITDIR/sugarcrm" --flav="$flavor" --cleanCache=1 --base_dir="$GITDIR" --build_dir="$LOCATIONDIR" --ver="$version"
+    #php -n build.php --clean=0  --dir="$GITDIR/sugarcrm" --flav="$flavor" --cleanCache=1 --base_dir="$GITDIR" --build_dir="$LOCATIONDIR" --ver="$version"
+    php -n build.php --dir="$GITDIR/sugarcrm" --flav="$flavor" --cleanCache=1 --base_dir="$GITDIR" --build_dir="$LOCATIONDIR" --ver="$version" --latin=1
 
     chmod -R 0777 $WEBSUGARROOT
     popd > /dev/null 2>&1  
