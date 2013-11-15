@@ -7,7 +7,8 @@ DATALOADERDIR="$GITDIR/ibm/dataloaders"
 
 LOCATIONDIR=$HOME/gitrepos/sugarcrm/builds
 flavor="ult"
-version="6.4.0"
+#version="6.4.0"
+version="7.1.5"
 location_sugarbase=$LOCATIONDIR/$flavor/sugarcrm
 INSTALL_URL="http://localhost:81/install.php?goto=SilentInstall&cli=true";
 installType="$1"
@@ -99,7 +100,6 @@ do_backup(){
 do_build(){
     echo "now building new sugar build";
     pushd $BUILDPHPDIR > /dev/null 2>&1
-    #php -n build.php --clean=0  --dir="$GITDIR/sugarcrm" --flav="$flavor" --cleanCache=1 --base_dir="$GITDIR" --build_dir="$LOCATIONDIR" --ver="$version"
     php -n build.php --dir="$GITDIR/sugarcrm" --flav="$flavor" --cleanCache=1 --base_dir="$GITDIR" --build_dir="$LOCATIONDIR" --ver="$version" --latin=1
 
     chmod -R 0777 $WEBSUGARROOT
